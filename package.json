@@ -1,0 +1,29 @@
+{
+  "name": "precision",
+  "version": "1.0.0",
+  "description": "",
+  "main": "precision.js",
+  "scripts": {
+    "server": "nodemon precision.js -q",
+    "dev": "concurrently \" npm run server \""
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.0",
+    "bcrypt": "^5.0.0",
+    "body-parser": "^1.19.0",
+    "concurrently": "^5.3.0",
+    "dotenv": "^8.2.0",
+    "env-cmd": "^10.1.0",
+    "express": "^4.17.1",
+    "express-validator": "^6.13.0",
+    "fcm-node": "^1.6.1",
+    "jsonwebtoken": "^8.5.1",
+    "jwt-decode": "^3.1.2",
+    "mongoose": "^5.11.5",
+    "multer": "^1.4.3",
+    "nodemailer": "^6.6.3",
+    "nodemon": "^2.0.6"
+  }
+}
