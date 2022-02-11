@@ -33,7 +33,7 @@ const addSupplier = async (req, res) => {
     } else if (!req.body.created_by) {
       res.status(400).send({ status: 0, message: "Please enter created by" });
     }
-    const supplier = Supplier({
+    const supplier =new Supplier({
       supplier_name: req.body.supplier_name,
       supplier_contact: req.body.supplier_contact,
       contact_person: req.user.employe_name,
@@ -43,7 +43,8 @@ const addSupplier = async (req, res) => {
       account_no: req.body.account_no,
       supplier_date: req.body.supplier_date,
       created_by: req.user._id,
-      user_id: req.user._id,
+      user_id: req.user._id
+  
     });
     const supplierFind = await Supplier.findOne({
       supplier_email: req.body.supplier_email,
@@ -153,13 +154,11 @@ const updateSupplier = async (req, res) => {
     if (!supplier) {
       res.status(404).send({ status: 0, message: "Supplier not Found" });
     } else {
-      res
-        .status(200)
-        .send({
-          status: 1,
-          message: "Update Successful",
-          updatedData: supplier,
-        });
+      res.status(200).send({
+        status: 1,
+        message: "Update Successful",
+        updatedData: supplier,
+      });
     }
   } catch (e) {
     res.send(e.message);

@@ -52,7 +52,8 @@ const supplierSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: "user",
-    },
+    }
+    
   },
   {
     timestamps: true,
@@ -60,4 +61,5 @@ const supplierSchema = mongoose.Schema(
 );
 
 const Supplier = mongoose.model("Supplier", supplierSchema);
+
 module.exports = Supplier;
