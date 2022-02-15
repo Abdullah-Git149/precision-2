@@ -86,6 +86,33 @@ const newAnalysis = new mongoose.Schema({
     ref: "Product",
   },
 });
+const productRequest = new mongoose.Schema(
+  {
+    vin_number: {
+      type: String,
+      default: null,
+    },
+    stock_ro: {
+      type: String,
+      default: null,
+    },
+
+    pr_no: {
+      type: Number,
+      default: 0,
+    },
+    parts: [
+      {
+        part_name: { type: String, required: true },
+        part_model_num: { type: String, required: true },
+      },
+    ],
+  },
+  {
+    timestamps: true,
+  }
+);
+
 // Product Images Schema
 const workShopSchema = new mongoose.Schema(
   {
@@ -163,6 +190,11 @@ const Product = mongoose.model("Product", productSchema);
 const WorkShop = mongoose.model("WorkShop", workShopSchema);
 const UserProduct = mongoose.model("UserProduct", userProductSchema);
 const NewAnalysis = mongoose.model("NewAnalysis", newAnalysis);
-
-
-module.exports = { Product, WorkShop, UserProduct, NewAnalysis };
+const ProductRequest = mongoose.model("ProductRequest", productRequest);
+module.exports = {
+  Product,
+  WorkShop,
+  UserProduct,
+  NewAnalysis,
+  ProductRequest,
+};

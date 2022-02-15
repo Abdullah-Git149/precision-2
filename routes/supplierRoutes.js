@@ -4,7 +4,8 @@ const {
   addSupplier,
   listOfSupplier,
   deleteSupplier,
-  updateSupplier
+  updateSupplier,
+  
 } = require("../controllers/supplierController");
 const { auth } = require("../middlewares/auth");
 
