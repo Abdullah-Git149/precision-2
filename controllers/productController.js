@@ -4,6 +4,7 @@ const {
   newAnalysis,
   NewAnalysis,
   ProductRequest,
+  PurchaseOrder,
 } = require("../models/ProductModel");
 const mongoose = require("mongoose");
 
@@ -145,7 +146,7 @@ const productRequest = async (req, res) => {
     const analysisProduct = await NewAnalysis.findById({
       _id: req.body.analysis_id,
     });
-    
+
     if (!analysisProduct) {
       return res.status(404).send({ status: 0, message: "Wrong analysis Id" });
     } else {
@@ -183,6 +184,39 @@ const listOFProductRequest = async (req, res) => {
     return res.status(400).send(e);
   }
 };
+
+const purchaseOrder = async (req, res) => {
+  try {
+    const product = await ProductRequest.findById({ _id: req.body.product_id });
+    const poDevelopment = await PurchaseOrder({
+      vin_number: product.vin_number,
+      stock_ro: product.stock_ro,
+      pr_no: product.pr_no,
+      partsDetail:req.body.partsDetail,
+      // parts: [...product.parts, req.body.partsDetail.part_supplier,req.body.partsDetail.part_amount],
+      parts: [...product.parts,partsDetail],
+    });
+    console.log(poDevelopment);
+    const poDevelopmentFind = await PurchaseOrder.findOne({
+      vin_number: req.body.vin_number,
+    });
+    if (poDevelopmentFind) {
+      return res
+        .status(400)
+        .send({ status: 0, message: "Use another Vin num" });
+    } else {
+      const savePo = await poDevelopment.save();
+      if (savePo) {
+        return res
+          .status(201)
+          .send({ status: 1, message: "PO is develop", data: savePo });
+      }
+    }
+  } catch (error) {
+    res.send(error.message);
+  }
+};
+
 // List of PRoduct
 const productListBy = async (req, res) => {
   try {
@@ -261,4 +295,5 @@ module.exports = {
   dropDownVin,
   productRequest,
   listOFProductRequest,
+  purchaseOrder,
 };

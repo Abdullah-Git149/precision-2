@@ -57,6 +57,7 @@ const productSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+// NEW ANALYSIS
 const newAnalysis = new mongoose.Schema({
   vin_number: {
     type: String,
@@ -86,6 +87,7 @@ const newAnalysis = new mongoose.Schema({
     ref: "Product",
   },
 });
+// PRODUCT REQUEST
 const productRequest = new mongoose.Schema(
   {
     vin_number: {
@@ -112,8 +114,42 @@ const productRequest = new mongoose.Schema(
     timestamps: true,
   }
 );
-
-// Product Images Schema
+// PURCHASE ORDER
+const purchaseOrder = new mongoose.Schema({
+  vin_number: {
+    type: String,
+    trim: true,
+    default: null,
+  },
+  stock_ro: {
+    type: String,
+    trim: true,
+    default: null,
+  },
+  pr_no: {
+    type: Number,
+    trim: true,
+  },
+  parts: [
+    {
+      part_name: { type: String, required: false },
+      part_model_num: { type: String, required: false },
+      part_supplier: { type: String, required: false },
+      part_amount: { type: String, required: false },
+    },
+  ],
+  partsDetail: [
+    {
+      part_supplier: { type: String, required: false },
+      part_amount: { type: String, required: false },
+    },
+  ],
+  total_amount: {
+    type: Number,
+    trim: true,
+  },
+});
+// Product Images Schema    
 const workShopSchema = new mongoose.Schema(
   {
     product_id: {
@@ -191,10 +227,13 @@ const WorkShop = mongoose.model("WorkShop", workShopSchema);
 const UserProduct = mongoose.model("UserProduct", userProductSchema);
 const NewAnalysis = mongoose.model("NewAnalysis", newAnalysis);
 const ProductRequest = mongoose.model("ProductRequest", productRequest);
+const PurchaseOrder = mongoose.model("PurchaseOrder", purchaseOrder);
+
 module.exports = {
   Product,
   WorkShop,
   UserProduct,
   NewAnalysis,
   ProductRequest,
+  PurchaseOrder,
 };

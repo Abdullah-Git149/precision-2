@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {newProduct,listOFProductRequest,productListBy,productRequest,dropDownVin ,analysisList,workShopHours,workshoopListBy,addNewAnalysis} = require('../controllers/productController');
+const {newProduct,purchaseOrder,listOFProductRequest,productListBy,productRequest,dropDownVin ,analysisList,workShopHours,workshoopListBy,addNewAnalysis} = require('../controllers/productController');
 const {auth,vinAuth} = require('../middlewares/auth');
 const {upload} = require('../config/utils');
 
@@ -15,4 +15,5 @@ router.get('/api/analysisList',analysisList);
 router.get('/api/dropDownVin',dropDownVin);
 router.post('/api/addProductReq',productRequest);
 router.get('/api/listOfPQ',listOFProductRequest);
+router.post('/api/poDevelopment',purchaseOrder);
 module.exports = router;
