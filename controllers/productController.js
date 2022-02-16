@@ -175,7 +175,7 @@ const listOFProductRequest = async (req, res) => {
     } else {
       return res.status(200).send({
         status: 1,
-        message: "List of PQ",
+        message: "Listtt of  PQ",
         count: listofPQ.length,
         data: listofPQ,
       });
