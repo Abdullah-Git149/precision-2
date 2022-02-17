@@ -103,19 +103,34 @@ const dropDownVin = async (req, res) => {
 // ADDING NEW ANALYSIS
 const addNewAnalysis = async (req, res) => {
   try {
-    const newAnalysis = new NewAnalysis({
+    const checkVin = await NewAnalysis.findOne({
       vin_number: req.body.vin_number,
-      date: req.body.date,
-      parts: req.body.parts,
-      created_by: req.body.created_by,
-      comment: req.body.comment,
-      stock_ro: req.body.stock_ro,
     });
-    const newdata = await newAnalysis.save();
-    if (newdata) {
-      return res
-        .status(200)
-        .send({ status: 1, message: "Successfull", data: newdata });
+    if (checkVin) {
+      return res.status(400).send({ status: 1, message: "Already Exist." });
+    } else {
+      if (!req.body.date) {
+        return res
+          .status(400)
+          .send({ status: 0, message: "date field is required" });
+      } else {
+        const newAnalysis = new NewAnalysis({
+          vin_number: req.body.vin_number,
+          product_id: req.body.product_id,
+          date: req.body.date,
+          parts: req.body.parts,
+          created_by: req.body.created_by,
+          comment: req.body.comment,
+          stock_ro: req.body.stock_ro,
+          pr_no: Math.floor(100000 + Math.random() * 900000),
+        });
+        const newdata = await newAnalysis.save();
+        if (newdata) {
+          return res
+            .status(200)
+            .send({ status: 1, message: "Successfull", data: newdata });
+        }
+      }
     }
   } catch (e) {
     return res.status(400).send(e);
@@ -140,82 +155,161 @@ const analysisList = async (req, res) => {
     return res.status(400).send(e);
   }
 };
+// ************* NOT USED  *****************
 // PRODUCT REQUEST
-const productRequest = async (req, res) => {
-  try {
-    const analysisProduct = await NewAnalysis.findById({
-      _id: req.body.analysis_id,
-    });
+// const productRequest = async (req, res) => {
+//   try {
+//     const analysisProduct = await NewAnalysis.findById({
+//       _id: req.body.analysis_id,
+//     });
 
-    if (!analysisProduct) {
-      return res.status(404).send({ status: 0, message: "Wrong analysis Id" });
-    } else {
-      const addProduct = await ProductRequest({
-        vin_number: analysisProduct.vin_number,
-        stock_ro: analysisProduct.stock_ro,
-        pr_no: Math.floor(100000 + Math.random() * 900000),
-        parts: analysisProduct.parts,
-      });
+//     if (!analysisProduct) {
+//       return res.status(404).send({ status: 0, message: "Wrong analysis Id" });
+//     } else {
+//       const addProduct = await ProductRequest({
+//         vin_number: analysisProduct.vin_number,
+//         stock_ro: analysisProduct.stock_ro,
+//         pr_no: Math.floor(100000 + Math.random() * 900000),
+//         parts: analysisProduct.parts,
+//       });
 
-      const newProductReq = await addProduct.save();
-      return res
-        .status(201)
-        .send({ status: 1, message: "Successful", data: newProductReq });
-    }
-  } catch (e) {
-    return res.status(400).send(e);
-  }
-};
+//       const newProductReq = await addProduct.save();
+//       return res
+//         .status(201)
+//         .send({ status: 1, message: "Successful", data: newProductReq });
+//     }
+//   } catch (e) {
+//     return res.status(400).send(e);
+//   }
+// };
+// ********************** 
 // LIST OF PRODUCT REQUEST
-const listOFProductRequest = async (req, res) => {
-  try {
-    const listofPQ = await ProductRequest.find({});
-    if (!listofPQ) {
-      return res.status(404).send({ status: 0, message: "List is Empty" });
-    } else {
-      return res.status(200).send({
-        status: 1,
-        message: "Listtt of  PQ",
-        count: listofPQ.length,
-        data: listofPQ,
-      });
-    }
-  } catch (e) {
-    return res.status(400).send(e);
-  }
-};
+// const listOFProductRequest = async (req, res) => {
+//   try {
+//     const listofPQ = await ProductRequest.find({});
+//     if (!listofPQ) {
+//       return res.status(404).send({ status: 0, message: "List is Empty" });
+//     } else {
+//       return res.status(200).send({
+//         status: 1,
+//         message: "Listtt of  PQ",
+//         count: listofPQ.length,
+//         data: listofPQ,
+//       });
+//     }
+//   } catch (e) {
+//     return res.status(400).send(e);
+//   }
+// };
+// ************* NOT USED  *****************
+// const purchaseOrder = async (req, res) => {
+//   try {
+//     const product = await ProductRequest.findById({ _id: req.body.product_id });
+//     const poDevelopment = await PurchaseOrder({
+//       vin_number: product.vin_number,
+//       stock_ro: product.stock_ro,
+//       pr_no: product.pr_no,
+//       partsDetail:req.body.partsDetail,
+//       // parts: [...product.parts, req.body.partsDetail.part_supplier,req.body.partsDetail.part_amount],
+//       parts: [...product.parts,partsDetail],
+//     });
+//     console.log(poDevelopment);
+//     const poDevelopmentFind = await PurchaseOrder.findOne({
+//       vin_number: req.body.vin_number,
+//     });
+//     if (poDevelopmentFind) {
+//       return res
+//         .status(400)
+//         .send({ status: 0, message: "Use another Vin num" });
+//     } else {
+//       const savePo = await poDevelopment.save();
+//       if (savePo) {
+//         return res
+//           .status(201)
+//           .send({ status: 1, message: "PO is develop", data: savePo });
+//       }
+//     }
+//   } catch (error) {
+//     res.send(error.message);
+//   }
+// };
+// **************************************** 
 
+
+//ALL PURCHASE ORDER APIS START HERE 
 const purchaseOrder = async (req, res) => {
   try {
-    const product = await ProductRequest.findById({ _id: req.body.product_id });
-    const poDevelopment = await PurchaseOrder({
-      vin_number: product.vin_number,
-      stock_ro: product.stock_ro,
-      pr_no: product.pr_no,
-      partsDetail:req.body.partsDetail,
-      // parts: [...product.parts, req.body.partsDetail.part_supplier,req.body.partsDetail.part_amount],
-      parts: [...product.parts,partsDetail],
+    const check = await PurchaseOrder.findOne({
+      analysis_id: req.body.analysis_id,
     });
-    console.log(poDevelopment);
-    const poDevelopmentFind = await PurchaseOrder.findOne({
-      vin_number: req.body.vin_number,
-    });
-    if (poDevelopmentFind) {
+    if (check) {
       return res
         .status(400)
-        .send({ status: 0, message: "Use another Vin num" });
+        .send({ status: 0, message: "Use another analysis" });
     } else {
-      const savePo = await poDevelopment.save();
-      if (savePo) {
+      if (!req.body.analysis_id) {
         return res
-          .status(201)
-          .send({ status: 1, message: "PO is develop", data: savePo });
+          .status(400)
+          .send({ status: 0, message: "analysis_id field is required" });
+      } else if (!req.body.total_amount) {
+        return res.status(400).send({
+          status: 0,
+          message: "total amount is required field is required",
+        });
+      } else if (!req.body.expected_date) {
+        return res
+          .status(400)
+          .send({ status: 0, message: "expected date field is required" });
+      } else {
+        const savePO = await PurchaseOrder.create({
+          ...req.body,
+          po_no: Math.floor(100000 + Math.random() * 900000),
+        });
+        if (savePO) {
+          return res
+            .status(400)
+            .send({ status: 0, message: "Successfully saved.", data: savePO });
+        }
       }
     }
   } catch (error) {
     res.send(error.message);
   }
 };
+const listOfPO =async (req, res) => {
+  try {
+    const findPo = await PurchaseOrder.find({})
+    if (!findPo) {
+      return res.status(404).send({ status: 0, message: "List is Empty" });
+    } else {
+      return res.status(200).send({
+        status: 1,
+        message: "List of Purchase order",
+        count: findPo.length,
+        data: findPo,
+      });
+    }
+  } catch (error) {
+    res.send(error.message);
+  }
+};
+const gettingOnePO =async (req, res) => {
+  try {
+    const findOnePo = await PurchaseOrder.findById({_id:req.body.po_id})
+    if (!findOnePo) {
+      return res.status(404).send({ status: 0, message: "Purchase order is not found" });
+    } else {
+      return res.status(200).send({
+        status: 1,
+        message: "List of Purchase order",
+        data: findOnePo,
+      });
+    }
+  } catch (error) {
+    res.send(error.message);
+  }
+};
+
 
 // List of PRoduct
 const productListBy = async (req, res) => {
@@ -293,7 +387,9 @@ module.exports = {
   addNewAnalysis,
   analysisList,
   dropDownVin,
-  productRequest,
-  listOFProductRequest,
+  // productRequest,
+  // listOFProductRequest,
   purchaseOrder,
+  listOfPO,
+  gettingOnePO,
 };

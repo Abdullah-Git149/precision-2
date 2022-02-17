@@ -67,6 +67,10 @@ const newAnalysis = new mongoose.Schema({
     type: String,
     default: null,
   },
+  pr_no: {
+    type: Number,
+    trim: true,
+  },
   date: {
     type: String,
     default: null,
@@ -88,68 +92,72 @@ const newAnalysis = new mongoose.Schema({
   },
 });
 // PRODUCT REQUEST
-const productRequest = new mongoose.Schema(
-  {
-    vin_number: {
-      type: String,
-      default: null,
-    },
-    stock_ro: {
-      type: String,
-      default: null,
-    },
+// const productRequest = new mongoose.Schema(
+//   {
+//     vin_number: {
+//       type: String,
+//       default: null,
+//     },
+//     stock_ro: {
+//       type: String,
+//       default: null,
+//     },
 
-    pr_no: {
-      type: Number,
-      default: 0,
-    },
-    parts: [
-      {
-        part_name: { type: String, required: true },
-        part_model_num: { type: String, required: true },
-      },
-    ],
-  },
-  {
-    timestamps: true,
-  }
-);
+//     pr_no: {
+//       type: Number,
+//       default: 0,
+//     },
+//     parts: [
+//       {
+//         part_name: { type: String, required: true },
+//         part_model_num: { type: String, required: true },
+//       },
+//     ],
+//   },
+//   {
+//     timestamps: true,
+//   }
+// );
 // PURCHASE ORDER
 const purchaseOrder = new mongoose.Schema({
-  vin_number: {
-    type: String,
-    trim: true,
-    default: null,
+  analysis_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: "NewAnalysis",
   },
-  stock_ro: {
-    type: String,
-    trim: true,
-    default: null,
-  },
-  pr_no: {
+  po_no: {
     type: Number,
+    default: 0,
+  },
+  expected_date: {
+    type: String,
     trim: true,
+    required: true,
   },
   parts: [
     {
-      part_name: { type: String, required: false },
-      part_model_num: { type: String, required: false },
+      part_name: { type: String, required: true },
+      part_model_num: { type: String, required: true },
       part_supplier: { type: String, required: false },
       part_amount: { type: String, required: false },
-    },
-  ],
-  partsDetail: [
-    {
-      part_supplier: { type: String, required: false },
-      part_amount: { type: String, required: false },
+      delivery_status: {
+        type: String,
+        enum: ["recieved", "not recieved"],
+        default: "not recieved",
+      },
     },
   ],
   total_amount: {
     type: Number,
-    trim: true,
+    default: 0,
+  },
+  delivery_status: {
+    type: String,
+    enum: ["fully delivered", "partially delivered", "not delivered"],
+    default: "not delivered",
   },
 });
-// Product Images Schema    
+// Product Images Schema
 const workShopSchema = new mongoose.Schema(
   {
     product_id: {
@@ -226,7 +234,7 @@ const Product = mongoose.model("Product", productSchema);
 const WorkShop = mongoose.model("WorkShop", workShopSchema);
 const UserProduct = mongoose.model("UserProduct", userProductSchema);
 const NewAnalysis = mongoose.model("NewAnalysis", newAnalysis);
-const ProductRequest = mongoose.model("ProductRequest", productRequest);
+// const ProductRequest = mongoose.model("ProductRequest", productRequest);
 const PurchaseOrder = mongoose.model("PurchaseOrder", purchaseOrder);
 
 module.exports = {
@@ -234,6 +242,6 @@ module.exports = {
   WorkShop,
   UserProduct,
   NewAnalysis,
-  ProductRequest,
+  // ProductRequest,
   PurchaseOrder,
 };
