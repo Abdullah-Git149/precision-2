@@ -182,7 +182,7 @@ const analysisList = async (req, res) => {
 //     return res.status(400).send(e);
 //   }
 // };
-// ********************** 
+// **********************
 // LIST OF PRODUCT REQUEST
 // const listOFProductRequest = async (req, res) => {
 //   try {
@@ -233,10 +233,10 @@ const analysisList = async (req, res) => {
 //     res.send(error.message);
 //   }
 // };
-// **************************************** 
+// ****************************************
 
+//ALL PURCHASE ORDER APIS START HERE
 
-//ALL PURCHASE ORDER APIS START HERE 
 const purchaseOrder = async (req, res) => {
   try {
     const check = await PurchaseOrder.findOne({
@@ -276,33 +276,26 @@ const purchaseOrder = async (req, res) => {
     res.send(error.message);
   }
 };
-const listOfPO =async (req, res) => {
+const listOfPO = async (req, res) => {
   try {
-    const findPo = await PurchaseOrder.find({})
+    const findPo = await PurchaseOrder.find({});
     if (!findPo) {
       return res.status(404).send({ status: 0, message: "List is Empty" });
     } else {
-      return res.status(200).send({
-        status: 1,
-        message: "List of Purchase order",
-        count: findPo.length,
-        data: findPo,
+      return res.status(200).send({status: 1,message: "List of Purchase order",count: findPo.length,data: findPo,
       });
     }
   } catch (error) {
     res.send(error.message);
   }
 };
-const gettingOnePO =async (req, res) => {
+const gettingOnePO = async (req, res) => {
   try {
-    const findOnePo = await PurchaseOrder.findById({_id:req.body.po_id})
+    const findOnePo = await PurchaseOrder.findById({ _id: req.body.po_id });
     if (!findOnePo) {
       return res.status(404).send({ status: 0, message: "Purchase order is not found" });
     } else {
-      return res.status(200).send({
-        status: 1,
-        message: "List of Purchase order",
-        data: findOnePo,
+      return res.status(200).send({ status: 1,message: "Single Purchase order", data: findOnePo,
       });
     }
   } catch (error) {
@@ -310,6 +303,34 @@ const gettingOnePO =async (req, res) => {
   }
 };
 
+const deliveryStatus = async (req, res) => {
+  try {
+    const check = await PurchaseOrder.findById({ _id: req.body.po_id });
+    if (!check) {
+      return res.status(404).send({ status: 0, message: "Wrong ID" });
+    } else {
+      if (!req.body.po_id) {
+        return res.status(400).send({ status: 0, message: "ID field is required" });
+      } else {
+        const updatePO = await PurchaseOrder.findByIdAndUpdate(
+          { _id: req.body.po_id },
+          { parts: req.body.parts, delivery_status: req.body.delivery_status }
+        );
+        const savePO = await updatePO.save();
+
+        return res.status(201).send({
+            status: 1,
+            message: "Delivery status is updated",
+            data: savePO,
+          });
+      }
+    }
+  } catch (error) {
+    res.send(error.message);
+  }
+};
+
+////////////// END OF PURCHASE ORDER APIS/////////////
 
 // List of PRoduct
 const productListBy = async (req, res) => {
@@ -392,4 +413,5 @@ module.exports = {
   purchaseOrder,
   listOfPO,
   gettingOnePO,
+  deliveryStatus
 };

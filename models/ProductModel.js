@@ -142,8 +142,8 @@ const purchaseOrder = new mongoose.Schema({
       part_amount: { type: String, required: false },
       delivery_status: {
         type: String,
-        enum: ["recieved", "not recieved"],
-        default: "not recieved",
+        enum: ["recieved", "notrecieved"],
+        default: "notrecieved",
       },
     },
   ],
@@ -153,8 +153,8 @@ const purchaseOrder = new mongoose.Schema({
   },
   delivery_status: {
     type: String,
-    enum: ["fully delivered", "partially delivered", "not delivered"],
-    default: "not delivered",
+    enum: ["fullydelivered", "partiallydelivered", "notdelivered"],
+    default: "notdelivered",
   },
 });
 // Product Images Schema
